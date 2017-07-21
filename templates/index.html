@@ -1,0 +1,31 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+function startAJAXcalls(){  
+	setTimeout( function() {
+	    getVPNClients();
+	    startAJAXcalls(); 
+	},
+	1000
+	);
+    } 
+
+
+function getVPNClients(){
+     $.ajax({
+		url: '/get_status',
+		data: 'json',
+		success: function(json){
+			$('#users').empty();
+			$.each(json.users,function(){
+			console.log(this);
+			$('#users').append('<li>'+this['User name']+'&nbsp&nbsp'+this['Virtual IP']+'('+this['Real IP']+ ')</li>');
+		});
+	}
+});}
+
+$(document).ready(startAJAXcalls());
+</script>
+
+<body>
+	<ul id ='users'>LOADING!!!</ul>
+</body>

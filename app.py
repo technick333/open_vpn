@@ -1,0 +1,76 @@
+from flask import Flask,jsonify,render_template
+import socket as s
+import re
+import time
+
+from  flask_bootstrap import Bootstrap
+from  collections import defaultdict
+
+FILE_STATUS = '/var/log/openvpn-status.log'
+
+app  = Flask(__name__)
+bootstrap = Bootstrap(app)
+
+
+
+@app.route('/',methods = ['GET'])
+def index():
+	return render_template('index.html')
+
+#This it a comment 
+
+@app.route('/get_status_new',methods = ['GET'])
+def get_status_new():
+    with open(FILE_STATUS,'r') as f:
+        lines =  f.readlines()
+        
+        end_blck_clien_index  = lines.index('ROUTING TABLE\n')
+        end_blck_routin_index = lines.index('GLOBAL STATS\n')
+        header  =lines[2].split(',')
+        users = defaultdict(str)
+        
+        for item in lines[3:end_blck_clien_index]:
+            user = dict((k.strip(),v.strip()) for (k,v) in zip(header,item.split(',')))
+            users[user['Real Address']] = user
+        
+        header =lines[end_blck_clien_index+1].split(',')
+    
+        for item in lines[end_blck_clien_index+2:end_blck_routin_index]:
+             user = dict((k.strip(),v.strip()) for (k,v) in zip(header,item.split(',')))
+             users[user['Real Address']]['Virtual Address']=user['Virtual Address']
+             users[user['Real Address']]['Last Ref'] = user['Last Ref'] 
+    
+    return jsonify({'users':users})
+
+
+@app.route('/get_status',methods = ['GET'])
+def get_status():
+	users = {}
+	cli = s.socket(s.AF_INET,s.SOCK_STREAM)
+	cli.connect(('127.0.0.1',7777))
+	cli.recv(4096)
+	cli.send('status 3\r\n')
+	time.sleep(0.1)
+	data = ''
+	while True:
+		buff = cli.recv(4096)
+		data = data +buff
+		if len(buff) < 4096 :break
+	uid = 0
+	for item in data.splitlines():
+		if "CLIENT" in item and not "HEADER" in item:
+			tmp  = re.split(r'\t',item)[1:]
+			user = {}
+			user['User name']  = tmp[0]
+			user['Real IP']	   = tmp[1]
+			user['Virtual IP'] = tmp[2]
+			users[uid]=user
+			uid+=1 
+	return jsonify({'users':users})
+
+
+if __name__ =='__main__':
+	app.run(host='10.12.100.160',port=5555)
+
+
+
