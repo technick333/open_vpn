@@ -2,7 +2,6 @@ from flask import Flask,jsonify,render_template
 import socket as s
 import re
 import time
-
 from  flask_bootstrap import Bootstrap
 from  collections import defaultdict
 
@@ -12,7 +11,9 @@ app  = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 
-
+@app.route('/')
+def index():
+    return render_template('new_index.html')
 
 #This it a comment 
 
