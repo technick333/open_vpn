@@ -46,7 +46,7 @@ def get_status_new():
 
 
 if __name__ =='__main__':
-	app.run(host='10.12.100.160',port=5555)
+	app.run(host='localhost',port=5555)
 
 
 
