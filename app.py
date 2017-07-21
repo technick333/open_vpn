@@ -13,9 +13,6 @@ bootstrap = Bootstrap(app)
 
 
 
-@app.route('/',methods = ['GET'])
-def index():
-	return render_template('index.html')
 
 #This it a comment 
 
