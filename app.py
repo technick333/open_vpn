@@ -6,7 +6,7 @@ import time
 from  flask_bootstrap import Bootstrap
 from  collections import defaultdict
 
-FILE_STATUS = '/var/log/openvpn-status.log'
+FILE_STATUS = 'openvpn-status.log'
 
 app  = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -43,30 +43,6 @@ def get_status_new():
     return jsonify({'users':users})
 
 
-@app.route('/get_status',methods = ['GET'])
-def get_status():
-	users = {}
-	cli = s.socket(s.AF_INET,s.SOCK_STREAM)
-	cli.connect(('127.0.0.1',7777))
-	cli.recv(4096)
-	cli.send('status 3\r\n')
-	time.sleep(0.1)
-	data = ''
-	while True:
-		buff = cli.recv(4096)
-		data = data +buff
-		if len(buff) < 4096 :break
-	uid = 0
-	for item in data.splitlines():
-		if "CLIENT" in item and not "HEADER" in item:
-			tmp  = re.split(r'\t',item)[1:]
-			user = {}
-			user['User name']  = tmp[0]
-			user['Real IP']	   = tmp[1]
-			user['Virtual IP'] = tmp[2]
-			users[uid]=user
-			uid+=1 
-	return jsonify({'users':users})
 
 
 if __name__ =='__main__':
