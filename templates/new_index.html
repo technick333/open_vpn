@@ -56,7 +56,9 @@ $(document).ready(startAJAXcalls());
 {% endblock %}
 {% block content %}
     <div class="container">
-        <table class="table table-inverse">
+        <div class="panel panel-default">
+        <div class="panel-body">
+        <table class="table table-warning">
             <thead>
                 <tr>
                     <th>Common Name</th>
@@ -69,7 +71,10 @@ $(document).ready(startAJAXcalls());
                     </tr>
             </thead>
             <tbody id=users>
+            
             </tbody>
         </table>
+        </div>
+        </div>
     </div>
 {% endblock %}
