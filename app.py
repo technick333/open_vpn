@@ -30,7 +30,6 @@ def get_data():
 def index():
     return render_template('new_index.html')
 
-#This it a comment
 
 @app.route('/get_status_new',methods = ['GET'])
 def get_new():
