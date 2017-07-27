@@ -5,8 +5,6 @@ import time
 from  flask_bootstrap import Bootstrap
 from  collections import defaultdict
 
-FILE_STATUS = '/var/log/openvpn-status.log'
-
 app  = Flask(__name__)
 bootstrap = Bootstrap(app)
 
